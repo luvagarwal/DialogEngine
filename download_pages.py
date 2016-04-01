@@ -48,8 +48,10 @@ def process_product_pages(file_path):
         if len(out) > 0:
             count += 1
             pids_imp.append(pid)
+            os.system('google-chrome https://amazon.com/dp/%s'%(pid))
             print "Kam ke products found till now = " + str(count)
+            print pid
 
 
-
-process_product_pages(file_path)
+if __name__ == '__main__':
+    process_product_pages(file_path)
