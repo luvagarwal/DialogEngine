@@ -10,6 +10,9 @@ import os
 import subprocess
 import urllib2
 import re
+from collections import defaultdict
+
+import parse
 
 file_path = 'ProductId_Electronics.txt'
 
@@ -41,16 +44,23 @@ def get_product_html(pid):
 def process_product_pages(file_path):
     pids = get_product_ids(file_path)
     count = 0
+    pids_category_wise_num = defaultdict(int)
+    pids_category_wise_list = defaultdict(list)
     pids_imp = []
     for pid in pids:
         html = get_product_html(pid)
         out = re.findall(r'Technical Details', html)
         if len(out) > 0:
             count += 1
-            pids_imp.append(pid)
-            os.system('google-chrome https://amazon.com/dp/%s'%(pid))
+            category = parse.get_category('data/%s' % (pid))
+            pids_category_wise_num[category] += 1
+            pids_category_wise_list[category].append(pid)
+            #os.system('google-chrome https://amazon.com/dp/%s'%(pid))
             print "Kam ke products found till now = " + str(count)
             print pid
+            if len(pids_category_wise_num.keys()) % 10 == 0:
+                print pids_category_wise_num
+                print pids_category_wise_list
 
 
 if __name__ == '__main__':
