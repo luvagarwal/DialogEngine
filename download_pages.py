@@ -67,8 +67,8 @@ def process_product_pages(file_path):
                 print len(pids_category_wise_num)
                 l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])[-10:]
                 print l
+                break
     return pids_category_wise_list
 
 if __name__ == '__main__':
     process_product_pages(file_path)
-    
