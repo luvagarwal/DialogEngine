@@ -51,8 +51,13 @@ def process_product_pages(file_path):
         html = get_product_html(pid)
         out = re.findall(r'Technical Details', html)
         if len(out) > 0:
+            try:
+                category = parse.get_category('data/%s' % (pid))
+            except:
+                category = None
+            if not category:
+                continue
             count += 1
-            category = parse.get_category('data/%s' % (pid))
             pids_category_wise_num[category] += 1
             pids_category_wise_list[category].append(pid)
             #os.system('google-chrome https://amazon.com/dp/%s'%(pid))
