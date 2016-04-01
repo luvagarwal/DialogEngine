@@ -11,7 +11,7 @@ import subprocess
 import urllib2
 import re
 
-file_path = '/home/luv/Downloads/ProductId_CellPhone-and-Accessories.txt'
+file_path = 'ProductId_Electronics.txt'
 
 def get_product_ids(file_path):
     with open(file_path) as f:
@@ -41,11 +41,13 @@ def get_product_html(pid):
 def process_product_pages(file_path):
     pids = get_product_ids(file_path)
     count = 0
+    pids_imp = []
     for pid in pids:
         html = get_product_html(pid)
         out = re.findall(r'Technical Details', html)
         if len(out) > 0:
             count += 1
+            pids_imp.append(pid)
             print "Kam ke products found till now = " + str(count)
 
 
