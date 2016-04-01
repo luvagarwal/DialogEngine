@@ -30,9 +30,9 @@ def get_product_html(pid):
         FNULL = open(os.devnull, 'w')
         subprocess.Popen(['wget', 'https://amazon.com/dp/%s'%(pid),  '-O', 'data/%s'%(pid)],
                         stdout=FNULL, stderr=subprocess.STDOUT).wait()
-        print "downloaded "+pid
-    else:
-        print "File exists %s" % (pid)
+    #     print "downloaded "+pid
+    # else:
+    #     print "File exists %s" % (pid)
     with open('data/%s' % (pid)) as f:
         html = f.read()
     return html
