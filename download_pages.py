@@ -58,7 +58,7 @@ def process_product_pages(file_path):
             #os.system('google-chrome https://amazon.com/dp/%s'%(pid))
             print "Kam ke products found till now = " + str(count)
             print pid
-            if len(pids_category_wise_num.keys()) % 100 == 0:
+            if len(pids_category_wise_num) % 100 == 0:
                 l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])
                 print l
 
