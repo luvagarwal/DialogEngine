@@ -15,17 +15,13 @@ def get_category(file_path):
 
 def get_table_info(file_path):
     soup = make_soup(file_path)
-    table = soup.findAll('div')
-    print table
-
-    # The first tr contains the field names.
-    # headings = [th.get_text() for th in table.find("tr").find_all("th")]
-
-    # datasets = []
-    # for row in table.find_all("tr")[1:]:
-    #     dataset = zip(headings, (td.get_text() for td in row.find_all("td")))
-    #     datasets.append(dataset)
-
+    data = soup.findAll('h1', text=re.compile("Technical Details"))
+    data = data[0].parent
+    table = data.parent.find_all_next('table')[0]
+    d = {}
+    for tr in table.findAll("tr"):
+        d[tr.find("th").text.strip(' \n\t')] = tr.find("td").text.strip(' \n\t')
+    return d
 
 if __name__ == "__main__":
     matches = get_table_info('data/B000I97H68')
