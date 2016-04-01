@@ -65,7 +65,7 @@ def process_product_pages(file_path):
                 print "Kam ke products found till now = " + str(count)
                 print pid
                 print len(pids_category_wise_num)
-                l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])
+                l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])[-10:]
                 print l
 
 
