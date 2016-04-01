@@ -24,5 +24,5 @@ def get_table_info(file_path):
     return d
 
 if __name__ == "__main__":
-    matches = get_table_info('data/B000I97H68')
+    matches = get_table_info('data/B00004SD9J')
     print matches
