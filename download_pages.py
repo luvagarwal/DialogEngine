@@ -40,12 +40,14 @@ def get_product_html(pid):
 
 def process_product_pages(file_path):
     pids = get_product_ids(file_path)
+    count = 0
     for pid in pids:
         html = get_product_html(pid)
         out = re.findall(r'Technical Details', html)
-        print out
         if len(out) > 0:
-            print pid
+            count += 1
+            print "Kam ke products found till now = " + str(count)
+
 
 
 process_product_pages(file_path)
