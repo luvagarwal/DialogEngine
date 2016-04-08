@@ -45,7 +45,7 @@ def execute_query(word_list):
                         data = run_query('SELECT %s from `%s` where `Brand Name`="%s"' % (feature, t, product))
                     except:    
                         data = ()
-                if len(data) != 0:
+                if len(data) != 0 and data[0][0] != 'NULL':
                     return [[feature], [product], [d[0] for d in data]]
 
 
