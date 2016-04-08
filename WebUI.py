@@ -1,15 +1,16 @@
 from flask import Flask, jsonify
 from flask import render_template
+from flask import request
 
 import query
 
 
 app = Flask(__name__)
 
-@app.route('/sampleurl', methods=['GET'])
+@app.route('/reply', methods=['GET'])
 def samplefunction():
     #access your DB get your results here
-    val = query.main('What is the price of Cable Wholesale')
+    val = query.main(request.args.get("query"))
     print val
     data = {"value": val}
     return jsonify(data)

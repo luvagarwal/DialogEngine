@@ -72,8 +72,20 @@
 
 						messageSent : function(id, user, msg)
 						{
-							<!-- $("#log").append(id + " said: " + msg + "<br/>"); -->
-                            $("#chat_div").chatbox("option", "boxManager").addMsg(id, msg);
+							$("#chat_div").chatbox("option", "boxManager").addMsg(id, msg);
+							if (window.XMLHttpRequest)
+						        obj = new XMLHttpRequest();
+						    else
+						        obj = new ActiveXObject("Microsoft.XMLHTTP");
+						    obj.onreadystatechange = function(){
+					        	if(obj.readyState == 4 && obj.status == 200){
+					            	data = JSON.parse(obj.responseText);
+					            	$("#chat_div").chatbox("option", "boxManager").addMsg("Bot", data.value[0]);
+            					}
+            				}
+
+						    obj.open("GET", "/reply?query="+msg);
+						    obj.send();
                         }
 					});
 				}
