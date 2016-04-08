@@ -61,13 +61,14 @@ def process_product_pages(file_path):
             pids_category_wise_num[category] += 1
             pids_category_wise_list[category].append(pid)
             #os.system('google-chrome https://amazon.com/dp/%s'%(pid))
-            if count % 20 == 0:
-                # print "Kam ke products found till now = " + str(count)
-                # print pid
-                # print len(pids_category_wise_num)
-                # l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])[-10:]
-                # print l
-                break
+            # if count % 100 == 0:
+            #      print "Kam ke products found till now = " + str(count)
+            #      print pid
+            #      print len(pids_category_wise_num)
+            #      l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])[-10:]
+            #      print l
+                 
+                
     return pids_category_wise_list
 
 if __name__ == '__main__':

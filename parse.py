@@ -13,6 +13,15 @@ def get_category(file_path):
     matches = soup.findAll('div', id="wayfinding-breadcrumbs_feature_div")
     return matches[0].findAll('li')[-1].text.strip(' \n\t')
 
+def get_price(file_path):
+    soup = make_soup(file_path)
+    try:
+        matches = soup.findAll('span', id="priceblock_ourprice")[0]
+        price = matches.text.strip(' \n\t')
+    except:
+        price = 'NULL'
+    return price
+
 def get_table_info(file_path):
     soup = make_soup(file_path)
 
@@ -26,6 +35,7 @@ def get_table_info(file_path):
     d = {}
     for tr in table.findAll("tr"):
         d[tr.find("th").text.strip(' \n\t')] = tr.find("td").text.strip(' \n\t')
+    d['price'] = get_price(file_path)
     return d
 
 if __name__ == "__main__":

@@ -6,9 +6,10 @@ import parse
 import download_pages
 
 def run_query(query):
-    db = MySQLdb.connect(user="root", passwd="123123", db="dialogengine")
+    db = MySQLdb.connect(user="root", passwd="mysqlfan@90", db="dialogengine")
     cur = db.cursor()
     cur.execute(query)
+    db.close()
 
 def dump():
     file_path = 'ProductId_Electronics.txt'
@@ -29,13 +30,16 @@ def dump():
 
 def run_create_table_query(features, category):
     " generate an create mysql query "
+    if len(features) == 0:
+        return
     query = "create table `%s` (" % (category)
     for f in features:
         query += "`%s`" % (f)
         query += " VARCHAR(50),"
     query = query[:-1]
     query += ");"
-    run_query(query)
+    print query
+    #run_query(query)
 
 def run_insert_query(products, category, features):
     " generate an insert mysql query "
@@ -57,6 +61,6 @@ def run_insert_query(products, category, features):
         query += ");"
         if flag == 1:
             print query
-            run_query(query)
+            #run_query(query)
 
 dump()
