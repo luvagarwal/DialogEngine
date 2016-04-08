@@ -49,8 +49,7 @@ def execute_query(word_list):
                     return [d[0] for d in data]
 
 
-def main():
-    query = raw_input('Enter a question: ')
+def main(query):
     word_list = nltk.word_tokenize(query)
     # print word_list
     word_list = RemoveStopWords(word_list)
@@ -60,4 +59,5 @@ def main():
     return execute_query(word_list)
 
 if __name__ == "__main__":
-    main()
+    inp = raw_input('Enter a question: ')
+    print main(inp)
