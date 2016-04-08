@@ -8,10 +8,10 @@ import query
 app = Flask(__name__)
 
 @app.route('/reply', methods=['GET'])
-def samplefunction():
+def reply():
     #access your DB get your results here
+    # print request.args.get("query")
     val = query.main(request.args.get("query"))
-    print val
     data = {"value": val}
     return jsonify(data)
 

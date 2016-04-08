@@ -50,6 +50,8 @@ def execute_query(word_list):
 
 
 def output_in_user_format(output):
+    if not output:
+        return "Sorry. We couldn't find any relevant information for your question."
     return "The %s of the %s is %s" % (output[0][0], output[1][0], output[2][0])
 
 def main(query):
