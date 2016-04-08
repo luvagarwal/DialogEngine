@@ -46,8 +46,11 @@ def execute_query(word_list):
                     except:    
                         data = ()
                 if len(data) != 0:
-                    return [d[0] for d in data]
+                    return [[feature], [product], [d[0] for d in data]]
 
+
+def output_in_user_format(output):
+    return "The %s of the %s is %s" % (output[0][0], output[1][0], output[2][0])
 
 def main(query):
     word_list = nltk.word_tokenize(query)
@@ -56,7 +59,8 @@ def main(query):
     #print nltk.pos_tag(word_list)
     # print word_list
     word_list = remove_wh(word_list)
-    return execute_query(word_list)
+    output = execute_query(word_list)
+    return output_in_user_format(output)
 
 if __name__ == "__main__":
     inp = raw_input('Enter a question: ')

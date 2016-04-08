@@ -80,7 +80,7 @@
 						    obj.onreadystatechange = function(){
 					        	if(obj.readyState == 4 && obj.status == 200){
 					            	data = JSON.parse(obj.responseText);
-					            	$("#chat_div").chatbox("option", "boxManager").addMsg("Bot", data.value[0]);
+					            	$("#chat_div").chatbox("option", "boxManager").addMsg("Bot", data.value);
             					}
             				}
 
