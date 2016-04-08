@@ -1,8 +1,16 @@
 /* style sheets */
 
 body {
-    background-color: #ffffb3;
+    background-color: #FAFAFD;
+    background: url('/static/background.png') no-repeat center center fixed; 
+    background-position: right 93px;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
+
+
 .ui-chatbox {
     position: fixed;
     bottom:0;
@@ -66,3 +74,37 @@ body {
     word-wrap: break-word;      /* IE */
 	font-size:12px;
 }
+
+.ui-widget {
+    font-family: proxima-nova-alt,Proxima Nova Alt,sans-serif;  
+}
+
+
+#div1 {
+    font-family: proxima-nova-alt,Proxima Nova Alt,sans-serif;  
+    font-size: 16px;
+    color: #333;
+    letter-spacing: 2px;
+    line-height: 1px;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+#openchatbox {
+    font-family: proxima-nova-alt,Proxima Nova Alt,sans-serif;  
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1px;
+    font-size: 12px;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+.my-nav {
+    border-radius: 0px;
+    background-color: #FFFFFF;
+    padding-left: 180px;
+    padding-right: 160px;
+}
+
