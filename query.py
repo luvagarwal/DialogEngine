@@ -66,11 +66,11 @@ def execute_query(word_list):
 
 def output_in_user_format(output):
     if not output:
-        return "<i>Sorry. We couldn't find any relevant information for your question.</i>"
+        return "Sorry. We couldn't find any relevant information for your question."
     s = ""
     for key, value in output['spellcorrected'].iteritems():
         if key != value:
-            s += "<i>showing results for %s instead of %s\n</i>" % (value, key)
+            s += "(showing results for %s instead of %s\n)" % (value, key)
     s += "%s of %s is %s" % (output["feature"], output["product"], output["val"])
     return s
 
