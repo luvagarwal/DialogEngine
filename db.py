@@ -10,6 +10,24 @@ def getDB():
     db = client.dialogengine
     return db
 
+def getCollections():
+    db = getDB()
+    return db.collection_names()
+
+def findProductFeatureValue(product, feature):
+    db = getDB()
+    colls = getCollections()
+    for coll in colls:
+        cursor = db[coll].find({"Brand Name": product})
+        docs = [d for d in cursor]
+        if len(docs) == 0:
+            continue
+        for doc in docs:
+            try:
+                return doc[feature]
+            except:
+                pass
+
 def insert_one(table, value):
     db = getDB()
     db[table].insert_one(value)

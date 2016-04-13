@@ -1,17 +1,21 @@
 #!/usr/bin/env python
 import nltk
 from nltk.corpus import stopwords
-import MySQLdb
+
+import db
 
 cachedStopWords = stopwords.words("english")
 
-def run_query(query):
-    db = MySQLdb.connect(user="root", passwd="123123", db="dialogengine")
-    cur = db.cursor()
-    cur.execute(query)
-    data = cur.fetchall()
-    db.close()
-    return data
+# def run_query(query):
+#     db = MySQLdb.connect(user="root", passwd="123123", db="dialogengine")
+#     cur = db.cursor()
+#     cur.execute(query)
+#     data = cur.fetchall()
+#     db.close()
+#     return data
+
+def run_query():
+    pass
 
 def RemoveStopWords(word_list):
     removed = []
@@ -28,31 +32,38 @@ def remove_wh(word_list):
             removed.append(x)
     return removed
 
-def execute_query(word_list):
-    feature = word_list[0]
-    product = ' '.join(word_list[1:])
-    tables = run_query('SHOW TABLES;')
-    for table in tables:
-        t = table[0]
-        features = run_query('describe `%s`' % (t))
-        for f in features:
-            if feature == f[0]:
-                try:
-                    #print 'SELECT %s from `%s` where Brand="%s"' % (feature, t, product)
-                    data = run_query('SELECT %s from `%s` where Brand="%s"' % (feature, t, product))
-                except:
-                    try:
-                        data = run_query('SELECT %s from `%s` where `Brand Name`="%s"' % (feature, t, product))
-                    except:    
-                        data = ()
-                if len(data) != 0 and data[0][0] != 'NULL':
-                    return [[feature], [product], [d[0] for d in data]]
+# def execute_query(word_list):
+#     feature = word_list[0]
+#     print feature
+#     product = ' '.join(word_list[1:])
+#     tables = run_query('SHOW TABLES;')
+#     for table in tables:
+#         t = table[0]
+#         features = run_query('describe `%s`' % (t))
+#         for f in features:
+#             if feature == f[0]:
+#                 try:
+#                     #print 'SELECT %s from `%s` where Brand="%s"' % (feature, t, product)
+#                     data = run_query('SELECT %s from `%s` where Brand="%s"' % (feature, t, product))
+#                 except:
+#                     try:
+#                         data = run_query('SELECT %s from `%s` where `Brand Name`="%s"' % (feature, t, product))
+#                     except:    
+#                         data = ()
+#                 if len(data) != 0 and data[0][0] != 'NULL':
+#                     return [[feature], [product], [d[0] for d in data]]
 
+def execute_query(word_list):
+    feature = word_list[0].lower()
+    product = ' '.join(word_list[1:]).lower()
+    val = db.findProductFeatureValue(product, feature)
+    if val:
+        return {"feature": feature, "product": product, "val": val}
 
 def output_in_user_format(output):
     if not output:
         return "Sorry. We couldn't find any relevant information for your question."
-    return "%s of %s is %s" % (output[0][0], output[1][0], output[2][0])
+    return "%s of %s is %s" % (output["feature"], output["product"], output["val"])
 
 def main(query):
     if query[-1] == '?':
