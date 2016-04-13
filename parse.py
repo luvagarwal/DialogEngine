@@ -11,16 +11,16 @@ def get_category(file_path):
     soup = make_soup(file_path)
     #matches = soup.findAll(text=re.compile("Product Information"))
     matches = soup.findAll('div', id="wayfinding-breadcrumbs_feature_div")
-    return matches[0].findAll('li')[-1].text.strip(' \n\t')
+    return matches[0].findAll('li')[-1].text.strip(' \r\n\t')
 
 def get_price(file_path):
     soup = make_soup(file_path)
     try:
         matches = soup.findAll('span', id="priceblock_ourprice")[0]
-        price = matches.text.strip(' \n\t')
+        price = matches.text.strip(' \r\n\t')
+        return price
     except:
-        price = 'NULL'
-    return price
+        pass
 
 def get_table_info(file_path):
     soup = make_soup(file_path)
@@ -38,7 +38,9 @@ def get_table_info(file_path):
         value = tr.find("td").text.strip(' \r\n\t').lower()
         if key.find('.') < 0:
             d[key] = value
-    d['price'] = get_price(file_path)
+    price = get_price(file_path)
+    if price:
+        d['price'] = price
     return d
 
 if __name__ == "__main__":
