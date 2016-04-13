@@ -48,6 +48,28 @@ def insert_many(table, values):
     print values
     db[table].insert_many(values)
 
+def pushintofile(features, tp):
+    if len(features) == 0:
+        return
+    features = '\n'.join(str(feature) for feature in features)
+    features += '\n'
+    with open('%sForSpellChecking.txt'%(tp), 'a+') as f:
+        f.write(features)
+
+def get_all_brands(all_info):
+    all_brands = []
+    for info in all_info:
+        try:
+            brand = info["brand name"]
+        except:
+            try:
+                brand = info["brand"]
+            except:
+                brand = None
+        if brand:
+            all_brands.append(brand)
+    return all_brands
+
 def dump():
     file_path = 'ProductId_Electronics.txt'
     categorized_pids = download_pages.process_product_pages(file_path)
@@ -58,9 +80,12 @@ def dump():
             info = parse.get_table_info('data/%s'%(pid))
             if not info:
                 continue
-            # all_features += info.keys()
+            all_features += info.keys()
             all_info.append(info)
-        # features = set(all_features)
+        features = set(all_features)
+        pushintofile(features, "features")
+        all_brands = get_all_brands(all_info)
+        pushintofile(all_brands, "brands")
         if len(all_info) == 0:
             continue
         insert_many(category, all_info)
