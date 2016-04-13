@@ -18,7 +18,17 @@ def findProductFeatureValue(product, feature):
     db = getDB()
     colls = getCollections()
     for coll in colls:
-        cursor = db[coll].find({"Brand Name": product})
+        cursor = db[coll].find({"brand name": product})
+        docs = [d for d in cursor]
+        if len(docs) == 0:
+            continue
+        for doc in docs:
+            try:
+                return doc[feature]
+            except:
+                pass
+    for coll in colls:
+        cursor = db[coll].find({"brand": product})
         docs = [d for d in cursor]
         if len(docs) == 0:
             continue
