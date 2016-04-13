@@ -57,16 +57,22 @@ def remove_wh(word_list):
 def execute_query(word_list):
     feature = word_list[0].lower()
     product = ' '.join(word_list[1:]).lower()
+    efeature, eproduct = feature, product
     feature = spellcorrector.correct(feature, "features")
     product = spellcorrector.correct(product, "brands")
     val = db.findProductFeatureValue(product, feature)
     if val:
-        return {"feature": feature, "product": product, "val": val}
+        return {"feature": feature, "product": product, "val": val, "spellcorrected": {efeature: feature, eproduct: product}}
 
 def output_in_user_format(output):
     if not output:
         return "Sorry. We couldn't find any relevant information for your question."
-    return "%s of %s is %s" % (output["feature"], output["product"], output["val"])
+    s = ""
+    for key, value in output['spellcorrected'].iteritems():
+        if key != value:
+            s += "showing results for %s instead of %s\n" % (key, value)
+    s += "%s of %s is %s" % (output["feature"], output["product"], output["val"])
+    return s
 
 def main(query):
     if query[-1] == '?':
