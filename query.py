@@ -55,6 +55,8 @@ def output_in_user_format(output):
     return "%s of %s is %s" % (output[0][0], output[1][0], output[2][0])
 
 def main(query):
+    if query[-1] == '?':
+        query = query[:-1]
     word_list = nltk.word_tokenize(query)
     # print word_list
     word_list = RemoveStopWords(word_list)
