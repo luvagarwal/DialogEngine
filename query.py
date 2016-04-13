@@ -3,6 +3,7 @@ import nltk
 from nltk.corpus import stopwords
 
 import db
+import spellcorrector
 
 cachedStopWords = stopwords.words("english")
 
@@ -56,6 +57,8 @@ def remove_wh(word_list):
 def execute_query(word_list):
     feature = word_list[0].lower()
     product = ' '.join(word_list[1:]).lower()
+    feature = spellcorrector.correct(feature, "features")
+    product = spellcorrector.correct(product, "brands")
     val = db.findProductFeatureValue(product, feature)
     if val:
         return {"feature": feature, "product": product, "val": val}
