@@ -34,7 +34,10 @@ def get_table_info(file_path):
     table = data.parent.find_all_next('table')[0]
     d = {}
     for tr in table.findAll("tr"):
-        d[tr.find("th").text.strip(' \n\t')] = tr.find("td").text.strip(' \n\t')
+        key = tr.find("th").text.strip(' \n\t').lower()
+        value = tr.find("td").text.strip(' \n\t').lower()
+        if key.find('.') < 0:
+            d[key] = value
     d['price'] = get_price(file_path)
     return d
 
