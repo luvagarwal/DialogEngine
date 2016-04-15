@@ -52,8 +52,8 @@ def insert_many(table, values):
     print values
     db[table].insert_many(values)
 
-def pushintofile(features, tp):
-    fname = '%sForSpellChecking.txt'%(tp)
+def pushintofile(features):
+    fname = 'ForSpellChecking.txt'
     if len(features) == 0:
         return
     features = '\n'.join(str(feature) for feature in features)
@@ -77,21 +77,20 @@ def get_all_brands(all_info):
 
 def dropStuff():
     dropDB()
-    fnames = ["categories", "brands", "features"]
-    fnames = [fname+"ForSpellChecking" for fname in fnames]
-    for fname in fnames:
-        try:
-            os.remove(fname)
-        except:
-            pass
+    # fnames = ["categories", "brands", "features"]
+    # fnames = [fname+"ForSpellChecking" for fname in fnames]
+    # for fname in fnames:
+    try:
+        os.remove("ForSpellChecking.txt")
+    except:
+        pass
 
 def dump():
+    dropStuff()
     file_path = 'ProductId_Electronics.txt'
     categorized_pids = download_pages.process_product_pages(file_path)
-    pushintofile([category for category in categorized_pids], "categories")
-    
-    dropStuff()
-    
+    pushintofile([category for category in categorized_pids])
+
     for category in categorized_pids:
         all_info = []
         all_features = []
@@ -102,9 +101,9 @@ def dump():
             all_features += info.keys()
             all_info.append(info)
         features = set(all_features)
-        pushintofile(features, "features")
+        pushintofile(features)
         all_brands = get_all_brands(all_info)
-        pushintofile(all_brands, "brands")
+        pushintofile(all_brands)
         if len(all_info) == 0:
             continue
         insert_many(category, all_info)

@@ -1,7 +1,9 @@
 import re, collections
 
 def words(text):
-    return re.findall('[a-z_ ]+', text.lower())
+    w = [t.strip('\n') for t in text]
+    w = ' '.join(w).split(' ')
+    return w
 
 def train(features):
     model = collections.defaultdict(lambda: 1)
@@ -23,12 +25,12 @@ def known_edits2(word, NWORDS, alphabet):
 def known(words, NWORDS):
     return set(w for w in words if w in NWORDS)
 
-def correct(word, tp):
-    NWORDS = train(words(file('%sForSpellChecking.txt'%(tp)).read()))
+def correct(word):
+    NWORDS = train(words(file("ForSpellChecking.txt").readlines()))
     alphabet = 'abcdefghijklmnopqrstuvwxyz_ '
     candidates = known([word], NWORDS) or known(edits1(word, alphabet), NWORDS) or    known_edits2(word, NWORDS, alphabet) or [word]
     return max(candidates, key=NWORDS.get)
 
 if __name__ == "__main__":
     word = raw_input("Enter a string: ")
-    print correct(word, "brands")
+    print correct(word)
