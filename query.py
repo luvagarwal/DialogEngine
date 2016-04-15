@@ -36,6 +36,8 @@ def RemoveStopWords(query_list):
 
     with open("ForSpellChecking.txt") as f:
         c = f.read()
+
+    c = c.replace("feature", "")
     query_list = [q for q in query_list if is_number(q) or q in c]
     query_list = remove_wh(query_list)
     removed_terms = [t for t in copy_query_list if t not in query_list]
@@ -54,7 +56,6 @@ def remove_wh(query_list):
 
 def get_query_type_and_details(query_list, removed_terms):
     out = {}
-
     # comparison type
     for q in removed_terms:
         if "er" == q[-2:]: # lesser, higher
@@ -65,11 +66,8 @@ def get_query_type_and_details(query_list, removed_terms):
             details["products"] = query_list[1:]
             out["details"] = details
             return out
-
         if "range" in q:
-
             out["type"] = "range"
-
             # Ex. "what are all the dslr cameras between the price range 100 to 200"
             details = {}
             details["range"] = query_list[-2:]
@@ -79,7 +77,6 @@ def get_query_type_and_details(query_list, removed_terms):
             details["category"] = ' '.join(query_list)
             out["details"] = details
             return out
-
     # query found is "feature type"
     out["type"] = "featurevalue"
     details = {}
@@ -95,6 +92,8 @@ def get_query_type_and_details(query_list, removed_terms):
 def print_format_all_features(val, product):
     out = "Following are the features for %s\n" % (product)
     for f in val:
+        if f == "_id":
+            continue
         out += "%s -> %s\n" % (f, val[f])
     return out
 
@@ -126,9 +125,10 @@ def print_format_range(val, feature, r, category):
     print "products are %s" % (products)
     out = "We have the following products in %s to %s:\n" % (r[0], r[1])
     for i, p in enumerate(products):
-        print p
-        out += "%s. " % (i)
+        out += "%s. " % (i+1)
         for k in p:
+            if k == "_id":
+                continue
             out += "%s is %s\n" % (k, p[k])
     return out
 
@@ -165,7 +165,7 @@ def execute_query(query_list, removed_terms, corrected_terms):
         etmp += "%s "%(k)
     out = ""
     if tmp != etmp:
-        out = "(showing results for %s instead of %s\n)" % (tmp, etmp)
+        out = "(showing results for %s instead of %s)\n" % (tmp, etmp)
     if query_info["type"] == "featurevalue":
         val = execute_query_feature_value(query_info["details"])
     elif query_info["type"] == "comparison":

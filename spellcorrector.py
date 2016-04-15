@@ -28,7 +28,7 @@ def known(words, NWORDS):
 def correct(word):
     NWORDS = train(words(file("ForSpellChecking.txt").readlines()))
     alphabet = 'abcdefghijklmnopqrstuvwxyz_ '
-    candidates = known([word], NWORDS) or known(edits1(word, alphabet), NWORDS) or    known_edits2(word, NWORDS, alphabet) or [word]
+    candidates = known([word], NWORDS) or known(edits1(word, alphabet), NWORDS) or [word]
     return max(candidates, key=NWORDS.get)
 
 if __name__ == "__main__":
