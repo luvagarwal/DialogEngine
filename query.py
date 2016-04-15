@@ -66,7 +66,7 @@ def get_query_type_and_details(query_list, removed_terms):
             details["products"] = query_list[1:]
             out["details"] = details
             return out
-        if "range" in q:
+        if "range" in q or "ranging" in q:
             out["type"] = "range"
             # Ex. "what are all the dslr cameras between the price range 100 to 200"
             details = {}
