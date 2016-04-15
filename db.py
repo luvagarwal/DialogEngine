@@ -1,4 +1,5 @@
 import os
+import re
 from collections import defaultdict
 from pymongo import MongoClient
 
@@ -28,7 +29,10 @@ def findProductFeatureValue(product, feature):
             continue
         for doc in docs:
             try:
-                return doc[feature]
+                if feature == "all_features":
+                    return doc
+                else:
+                    return doc[feature]
             except:
                 pass
     for coll in colls:
@@ -38,13 +42,41 @@ def findProductFeatureValue(product, feature):
             continue
         for doc in docs:
             try:
-                return doc[feature]
+                if feature == "all_features":
+                    return doc
+                else:
+                    return doc[feature]
             except:
                 pass
+
+def findProductsInRange(feature, r, category):
+    db = getDB()
+    products = db[category].find()
+    out = []
+    for p in products:
+        val = re.findall(r'[\d\.]+', p[feature])[0]
+        try:
+            val = float(val)
+        except:
+            return "range specified for wrong feature"        
+        if val >= float(r[0]) and val <= float(r[1]):
+            out.append(p)
+    return out
+
+# def findAllFeaturesOfAProduct(product):
+#     db = getDB()
+#     colls = getCollections()
+#     for coll in colls:
+#         cursor = db[coll].
 
 def insert_one(table, value):
     db = getDB()
     db[table].insert_one(value)
+
+def dummy_insert():
+    db = getDB()
+    val = [{"price": "10$"}, {"price": "20$"}, {"price": "30$"}]
+    insert_many("dummy", val)
 
 def insert_many(table, values):
     db = getDB()

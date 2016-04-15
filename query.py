@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import re
 import nltk
 from nltk.corpus import stopwords
 
@@ -6,37 +7,41 @@ import db
 import spellcorrector
 
 
-# def run_query(query):
-#     db = MySQLdb.connect(user="root", passwd="123123", db="dialogengine")
-#     cur = db.cursor()
-#     cur.execute(query)
-#     data = cur.fetchall()
-#     db.close()
-#     return data
-
 def run_query():
     pass
 
 def RemoveStopWords(query_list):
-    cachedStopWords = stopwords.words("english")
-    query_list = [q for q in query_list if q not in cachedStopWords]    
-    # remove all other terms which are not available in our
-    # categories, features and brands except numbers which will
-    # be used in range queries
     def is_number(n):
         try:
             int(n)
             return True
         except:
             return False
+
+    cachedStopWords = stopwords.words("english")
+    query_list = [q for q in query_list if q not in cachedStopWords]    
+    # remove all other terms which are not available in our
+    # categories, features and brands except numbers which will
+    # be used in range queries
+    corrected_terms = {}
+    for i in xrange(len(query_list)):
+        if is_number(query_list[i]):
+            continue
+        tmp = spellcorrector.correct(query_list[i])
+        if tmp != query_list[i]:
+            corrected_terms[query_list[i]] = tmp
+            query_list[i] = tmp
+
     copy_query_list = query_list[:]
+
     with open("ForSpellChecking.txt") as f:
         c = f.read()
     query_list = [q for q in query_list if is_number(q) or q in c]
     query_list = remove_wh(query_list)
-    removed = [t for t in copy_query_list if t not in query_list]
-    print query_list, removed
-    return [query_list, removed]
+    removed_terms = [t for t in copy_query_list if t not in query_list]
+    print query_list, removed_terms
+    return [query_list, removed_terms, corrected_terms]
+
 
 def remove_wh(query_list):
     t = ['What', 'Why', 'Who', 'Which', 'whose']
@@ -46,26 +51,6 @@ def remove_wh(query_list):
             removed.append(x)
     return removed
 
-# def execute_query(query_list):
-#     feature = query_list[0]
-#     print feature
-#     product = ' '.join(query_list[1:])
-#     tables = run_query('SHOW TABLES;')
-#     for table in tables:
-#         t = table[0]
-#         features = run_query('describe `%s`' % (t))
-#         for f in features:
-#             if feature == f[0]:
-#                 try:
-#                     #print 'SELECT %s from `%s` where Brand="%s"' % (feature, t, product)
-#                     data = run_query('SELECT %s from `%s` where Brand="%s"' % (feature, t, product))
-#                 except:
-#                     try:
-#                         data = run_query('SELECT %s from `%s` where `Brand Name`="%s"' % (feature, t, product))
-#                     except:    
-#                         data = ()
-#                 if len(data) != 0 and data[0][0] != 'NULL':
-#                     return [[feature], [product], [d[0] for d in data]]
 
 def get_query_type_and_details(query_list, removed_terms):
     out = {}
@@ -73,7 +58,6 @@ def get_query_type_and_details(query_list, removed_terms):
     # comparison type
     for q in removed_terms:
         if "er" == q[-2:]: # lesser, higher
-            print query_list
             out["type"] = "comparison"
             details = {}
             details["comp_term"] = q
@@ -82,8 +66,7 @@ def get_query_type_and_details(query_list, removed_terms):
             out["details"] = details
             return out
 
-        if "range" == q:
-            print query_list
+        if "range" in q:
 
             out["type"] = "range"
 
@@ -109,30 +92,92 @@ def get_query_type_and_details(query_list, removed_terms):
     out["details"] = details
     return out
 
+def print_format_all_features(val, product):
+    out = "Following are the features for %s\n" % (product)
+    for f in val:
+        out += "%s -> %s\n" % (f, val[f])
+    return out
 
-def execute_query(query_list, removed_terms):
-    return get_query_type_and_details(query_list, removed_terms)
-    e_query_list = query_list[:]
-    for i in xrange(len(query_list)):
-        query_list[i] = spellcorrector.correct(query_list[i])
-    feature = query_list[0]
-    product = ' '.join(query_list[1:])
-    efeature, eproduct = e_query_list[0], ' '.join(e_query_list[1:])
-    # feature = spellcorrector.correct(feature, "features")
-    # product = spellcorrector.correct(product, "brands")
+def print_format_feature_value(val, feature, product):
+    return "%s of %s is %s" % (feature, product, val)
+
+def print_format_comparison(val, products, feature, com_term):
+    pos = ["better", "higher", "larger", "greater"]
+    val = [re.findall(r'\d+', v)[0] for v in val]
+    l = [i for i in zip(val, products)]    
+    if com_term in pos:    
+        l = sorted(l, reverse=True)
+    else:
+        l = sorted(l)
+    val = [i[0] for i in l]
+    products = [i[1] for i in l]
+    out = "%s of %s is %s than %s" % (feature, products[0], com_term, products[1])
+    for p in products[2:]:
+        out += " in turn %s than %s" % (com_term, p)
+    out += " with values as "
+    for v in val:
+        out += "%s, "%(v)
+    out = out[:-2]
+    out += " respectively."
+    return out
+
+def print_format_range(val, feature, r, category):
+    products = [v for v in val]
+    print "products are %s" % (products)
+    out = "We have the following products in %s to %s:\n" % (r[0], r[1])
+    for i, p in enumerate(products):
+        print p
+        out += "%s. " % (i)
+        for k in p:
+            out += "%s is %s\n" % (k, p[k])
+    return out
+
+
+def execute_query_feature_value(query_details):
+    feature, product = query_details["feature"], query_details["product"]
     val = db.findProductFeatureValue(product, feature)
-    if val:
-        return {"feature": feature, "product": product, "val": val, "spellcorrected": {efeature: feature, eproduct: product}}
+    if feature == "all_features":
+        return print_format_all_features(val, product)
+    else:
+        return print_format_feature_value(val, feature, product)
 
-def output_in_user_format(output):
-    if not output:
+def execute_query_comparison(query_details):
+    feature = query_details["feature"]
+    products = query_details["products"]
+    products = [' '.join(products[0:2]), ' '.join(products[2: 4])]
+    val = []
+    for product in products:
+        val.append(db.findProductFeatureValue(product, feature))
+    return print_format_comparison(val, products, feature, query_details["comp_term"])
+
+def execute_query_range(query_details):
+    feature = query_details["feature"]
+    category = query_details["category"]
+    r = query_details["range"]
+    val = db.findProductsInRange(feature, r, category)
+    return print_format_range(val, feature, r, category)
+
+def execute_query(query_list, removed_terms, corrected_terms):
+    query_info = get_query_type_and_details(query_list, removed_terms)
+    tmp, etmp = "", ""
+    for k in corrected_terms:
+        tmp += "%s "%(corrected_terms[k])
+        etmp += "%s "%(k)
+    out = ""
+    if tmp != etmp:
+        out = "(showing results for %s instead of %s\n)" % (tmp, etmp)
+    if query_info["type"] == "featurevalue":
+        val = execute_query_feature_value(query_info["details"])
+    elif query_info["type"] == "comparison":
+        val = execute_query_comparison(query_info["details"])
+    elif query_info["type"] == "range":
+        val = execute_query_range(query_info["details"])
+    
+    if val:
+        return out + val
+    else:
         return "Sorry. We couldn't find any relevant information for your question."
-    s = ""
-    for key, value in output['spellcorrected'].iteritems():
-        if key != value:
-            s += "(showing results for %s instead of %s\n)" % (value, key)
-    s += "%s of %s is %s" % (output["feature"], output["product"], output["val"])
-    return s
+
 
 def remove_puncs(query):
     puncs = ["?", "!", ",", ":", "'"]
@@ -148,10 +193,10 @@ def main(query):
     query = query.lower()
     query = remove_puncs(query)
     query_list = nltk.word_tokenize(query)
-    query_list, removed_terms = RemoveStopWords(query_list)
+    query_list, removed_terms, corrected_terms = RemoveStopWords(query_list)
     #print nltk.pos_tag(query_list)
     # print query_list
-    output = execute_query(query_list, removed_terms)
+    output = execute_query(query_list, removed_terms, corrected_terms)
     return output
     return output_in_user_format(output)
 
