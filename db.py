@@ -1,9 +1,13 @@
+import os
 from collections import defaultdict
 from pymongo import MongoClient
 
 import parse
 import download_pages
 
+def dropDB():
+    client = MongoClient()
+    client.drop_database("dialogengine")
 
 def getDB():
     client = MongoClient()
@@ -49,11 +53,12 @@ def insert_many(table, values):
     db[table].insert_many(values)
 
 def pushintofile(features, tp):
+    fname = '%sForSpellChecking.txt'%(tp)
     if len(features) == 0:
         return
     features = '\n'.join(str(feature) for feature in features)
     features += '\n'
-    with open('%sForSpellChecking.txt'%(tp), 'a+') as f:
+    with open(fname, 'a+') as f:
         f.write(features)
 
 def get_all_brands(all_info):
@@ -70,9 +75,23 @@ def get_all_brands(all_info):
             all_brands.append(brand)
     return all_brands
 
+def dropStuff():
+    dropDB()
+    fnames = ["categories", "brands", "features"]
+    fnames = [fname+"ForSpellChecking" for fname in fnames]
+    for fname in fnames:
+        try:
+            os.remove(fname)
+        except:
+            pass
+
 def dump():
     file_path = 'ProductId_Electronics.txt'
     categorized_pids = download_pages.process_product_pages(file_path)
+    pushintofile([category for category in categorized_pids], "categories")
+    
+    dropStuff()
+    
     for category in categorized_pids:
         all_info = []
         all_features = []

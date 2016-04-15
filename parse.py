@@ -11,7 +11,7 @@ def get_category(file_path):
     soup = make_soup(file_path)
     #matches = soup.findAll(text=re.compile("Product Information"))
     matches = soup.findAll('div', id="wayfinding-breadcrumbs_feature_div")
-    return matches[0].findAll('li')[-1].text.strip(' \r\n\t')
+    return matches[0].findAll('li')[-1].text.strip(' \r\n\t').lower()
 
 def get_price(file_path):
     soup = make_soup(file_path)
