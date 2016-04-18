@@ -102,6 +102,7 @@ def print_format_feature_value(val, feature, product):
 
 def print_format_comparison(val, products, feature, com_term):
     pos = ["better", "higher", "larger", "greater"]
+    print val
     val = [re.findall(r'\d+', v)[0] for v in val]
     l = [i for i in zip(val, products)]    
     if com_term in pos:    
@@ -144,10 +145,12 @@ def execute_query_feature_value(query_details):
 def execute_query_comparison(query_details):
     feature = query_details["feature"]
     products = query_details["products"]
-    products = [' '.join(products[0:2]), ' '.join(products[2: 4])]
+    if len(products) > 2:
+        products = [' '.join(products[0:2]), ' '.join(products[2: 4])]
     val = []
     for product in products:
         val.append(db.findProductFeatureValue(product, feature))
+    print val
     return print_format_comparison(val, products, feature, query_details["comp_term"])
 
 def execute_query_range(query_details):

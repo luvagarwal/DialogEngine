@@ -20,6 +20,7 @@ def getCollections():
     return db.collection_names()
 
 def findProductFeatureValue(product, feature):
+    print product
     db = getDB()
     colls = getCollections()
     for coll in colls:
@@ -75,7 +76,7 @@ def insert_one(table, value):
 
 def dummy_insert():
     db = getDB()
-    val = [{"price": "10$"}, {"price": "20$"}, {"price": "30$"}]
+    val = [{"price": "10$", "brand name": "bomadic"}, {"price": "20$", "brand": "belkin"}, {"price": "30$"}]
     insert_many("dummy", val)
 
 def insert_many(table, values):
