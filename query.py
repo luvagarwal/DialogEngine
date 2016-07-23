@@ -44,7 +44,6 @@ def RemoveStopWords(query_list):
     print query_list, removed_terms
     return [query_list, removed_terms, corrected_terms]
 
-
 def remove_wh(query_list):
     t = ['What', 'Why', 'Who', 'Which', 'whose']
     removed = []
@@ -52,7 +51,6 @@ def remove_wh(query_list):
         if x not in t:
             removed.append(x)
     return removed
-
 
 def get_query_type_and_details(query_list, removed_terms):
     out = {}
@@ -133,7 +131,6 @@ def print_format_range(val, feature, r, category):
             out += "%s is %s\n" % (k, p[k])
     return out
 
-
 def execute_query_feature_value(query_details):
     feature, product = query_details["feature"], query_details["product"]
     val = db.findProductFeatureValue(product, feature)
@@ -181,7 +178,6 @@ def execute_query(query_list, removed_terms, corrected_terms):
     else:
         return "Sorry. We couldn't find any relevant information for your question."
 
-
 def remove_puncs(query):
     puncs = ["?", "!", ",", ":", "'"]
     new_query = ""
@@ -190,7 +186,6 @@ def remove_puncs(query):
             continue
         new_query += c
     return new_query
-
 
 def main(query):
     query = query.lower()

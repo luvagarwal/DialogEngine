@@ -5,8 +5,9 @@ import MySQLdb
 import parse
 import download_pages
 
+
 def run_query(query):
-    db = MySQLdb.connect(user="root", passwd="mysqlfan@90", db="dialogengine")
+    db = MySQLdb.connect(user="root", passwd="123123", db="dialogengine")
     cur = db.cursor()
     cur.execute(query)
     db.close()
@@ -26,7 +27,6 @@ def dump():
         features = set(all_features)
         run_create_table_query(features, category)
         run_insert_query(all_info, category, features)
-                
 
 def run_create_table_query(features, category):
     " generate an create mysql query "

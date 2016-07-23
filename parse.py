@@ -24,7 +24,6 @@ def get_price(file_path):
 
 def get_table_info(file_path):
     soup = make_soup(file_path)
-
     # TO-CORRECT
     data = soup.findAll('h1', text=re.compile("Technical Details"))
     try:

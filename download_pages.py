@@ -40,7 +40,6 @@ def get_product_html(pid):
         html = f.read()
     return html
 
-
 def process_product_pages(file_path):
     pids = get_product_ids(file_path)
     count = 0
@@ -61,14 +60,14 @@ def process_product_pages(file_path):
             pids_category_wise_num[category] += 1
             pids_category_wise_list[category].append(pid)
             #os.system('google-chrome https://amazon.com/dp/%s'%(pid))
-            # if count % 100 == 0:
-            #      print "Kam ke products found till now = " + str(count)
+            print count
+            if count % 59 == 0:
+                  #print "Kam ke products found till now = " + str(count)
+                  break
             #      print pid
             #      print len(pids_category_wise_num)
             #      l = sorted(pids_category_wise_num.items(), key=lambda x: x[1])[-10:]
-            #      print l
-                 
-                
+            #      print l            
     return pids_category_wise_list
 
 if __name__ == '__main__':
